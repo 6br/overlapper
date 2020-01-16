@@ -1,14 +1,17 @@
 {-# LANGUAGE DeriveGeneric, DeriveAnyClass #-}
-module Lib
-    ( pafToOvlp,
-      ctgPairToEdge
-    ) where
+module Lib where
+--    ( pafToOvlp,
+--      ctgPairToEdge,
+--      contigAsInt,
+--      Contig, 
+--    ) where
 
 import Bio.Paf
 import Bio.Paf.IO
 import Data.Char
 import Data.Graph
-import Data.List
+import Data.List hiding (groupBy)
+import Data.List.GroupBy 
 import qualified Data.Text as T
 import Data.Text.Read 
 import qualified Data.Vector as V
@@ -31,19 +34,27 @@ hangLength = 1000
 adjacentLength :: Int32
 adjacentLength = 10000
 
-minMapQ :: Int32
+--overlapMaximum :: Int32
+--overlapMaximum = is currently -inifinity 
+
+minMapQ :: Int8
 minMapQ = 0
 
 compareByQName :: Aln -> Aln -> Bool
 compareByQName a b = (_qname a) == (_qname b)
 
-isHangingAlignment:: Aln -> Bool
-isHangingAlignment aln = case (_strand aln) of
+isFstHangingAlignment :: Aln -> Bool
+isFstHangingAlignment aln = case (_strand aln) of
     '+' -> (_tlen aln - hangLength) <= (_tend aln)
     '-' -> (_tstart aln) <= hangLength
 
+isSndHangingAlignment :: Aln -> Bool
+isSndHangingAlignment aln = case (_strand aln) of
+    '+' -> (_tstart aln) <= hangLength
+    '-' -> (_tlen aln - hangLength) <= (_tend aln)
+
 isOverlapAlignment :: Aln -> Aln -> Bool
-isOverlapAlignment a b = isHangingAlignment a && isHangingAlignment b && (_qstart b - _qend a) <= adjacentLength
+isOverlapAlignment a b = isFstHangingAlignment a && isSndHangingAlignment b && (_qstart b - _qend a) <= adjacentLength
 
 extractOverlapAlignment :: [Aln] -> [(Contig, Contig)]
 extractOverlapAlignment aln = map (uncurry convertToEdge) $ filter (uncurry isOverlapAlignment) $ map (\x -> (x !! 0, x !! 1)) $ eachCons 2 aln

@@ -109,6 +109,13 @@ packages:
   original:
     git: git@github.com:6br/haskell-paf.git
     commit: eb935b3fd49c71fea49319915a97f519bd4fb718
+- completed:
+    hackage: groupBy-0.1.0.0@sha256:9bd0c5e6bbfaf793f6e816a072bcb085dba1149bf282e998567eaaed8d0efec4,1720
+    pantry-tree:
+      size: 450
+      sha256: 40726b0c6e42fc119f6c5a413fd81353cd69e3fd8893fec6e9ff50ccfc51172c
+  original:
+    hackage: groupBy-0.1.0.0@sha256:9bd0c5e6bbfaf793f6e816a072bcb085dba1149bf282e998567eaaed8d0efec4,1720
 snapshots:
 - completed:
     size: 527836

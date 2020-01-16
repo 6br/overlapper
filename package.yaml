@@ -35,6 +35,7 @@ dependencies:
 - vector
 - sam
 - paf
+- groupBy
 
 library:
   source-dirs: src

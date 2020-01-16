@@ -57,6 +57,7 @@ extra-deps:
 - data-default-instances-vector-0.0.1
 - git: git@github.com:6br/haskell-paf.git
   commit: eb935b3fd49c71fea49319915a97f519bd4fb718
+- groupBy-0.1.0.0@sha256:9bd0c5e6bbfaf793f6e816a072bcb085dba1149bf282e998567eaaed8d0efec4,1720
 
 # Override default flag values for local packages and extra-deps
 # flags: {}
