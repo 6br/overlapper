@@ -20,6 +20,7 @@ extra-source-files:
 description:         Please see the README on GitHub at <https://github.com/githubuser/overlapper#readme>
 
 dependencies:
+- aeson
 - attoparsec
 - attoparsec-applicative
 - base >= 4.7 && < 5
@@ -29,13 +30,14 @@ dependencies:
 - conduit-extra
 - containers
 - generic-deriving
+- groupBy
 - lens
 - text
 - text-show
 - vector
 - sam
 - paf
-- groupBy
+- fgl
 
 library:
   source-dirs: src

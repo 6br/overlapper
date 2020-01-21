@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveGeneric, DeriveAnyClass #-}
+{-# LANGUAGE DeriveGeneric, DeriveAnyClass, OverloadedStrings #-}
 module Lib where
 --    ( pafToOvlp,
 --      ctgPairToEdge,
@@ -8,6 +8,7 @@ module Lib where
 
 import Bio.Paf
 import Bio.Paf.IO
+import Data.Aeson (ToJSON)
 import Data.Char
 import Data.Graph
 import Data.List hiding (groupBy)
@@ -21,12 +22,25 @@ import GHC.Int
 data Contig = Contig {
    contigId :: Int,
    posStrand :: Bool
-} deriving (Show)
+} deriving (Show, Eq, Generic, ToJSON)
 
 contigAsInt :: Contig -> Int
 contigAsInt a = case (posStrand a) of
   True -> (contigId a) * 2
   False -> (contigId a) * 2 + 1 
+
+contigAsReverseInt :: Contig -> Int
+contigAsReverseInt a = case (posStrand a) of
+  False -> (contigId a) * 2
+  True -> (contigId a) * 2 + 1 
+
+intToContig :: Int -> Contig
+intToContig a = case (mod a 2) of
+  0 -> Contig (a `div` 2) True
+  1 -> Contig (a `div` 2) False
+
+genNodes :: Int -> [(Int, Contig)]
+genNodes n = zip [1..n] $ map intToContig [1..n] 
 
 hangLength :: Int32
 hangLength = 1000
@@ -61,7 +75,7 @@ extractOverlapAlignment aln = map (uncurry convertToEdge) $ filter (uncurry isOv
 
 pafToOvlp :: Paf -> [(Contig, Contig)]
 pafToOvlp paf = do
-    let grouped = groupBy compareByQName $ filter (\x -> _mapq x > minMapQ) $ V.toList $ _alns paf 
+    let grouped = groupBy compareByQName $ V.toList $ V.filter (\x -> _mapq x > minMapQ) $ _alns paf 
     let edgeList = concat $ map extractOverlapAlignment $ filter (\x -> (length x) >= 2) grouped 
     edgeList
     --let (graph, nodeFromVertex, vertexFromKey) = graphFromEdges edgeList
@@ -69,6 +83,12 @@ pafToOvlp paf = do
 
 ctgPairToEdge :: (Contig, Contig) -> Edge
 ctgPairToEdge (a, b) = (contigAsInt a, contigAsInt b) 
+
+ctgPairToEdges :: (Contig, Contig) -> [Edge]
+ctgPairToEdges (a, b) = [(contigAsInt a, contigAsInt b), (contigAsReverseInt b, contigAsReverseInt a)]
+
+--ctgPairToEdges :: (Contig, Contig) -> (Edge, Edge)
+--ctgPairToEdges (a, b) = ((contigAsInt a, contigAsInt b), (contigAsReverseInt b, contigAsReverseInt a))
 
 convertToEdge :: Aln -> Aln -> (Contig, Contig)
 convertToEdge a b = (convertToContig a, convertToContig b)
