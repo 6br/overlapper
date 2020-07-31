@@ -1,6 +1,6 @@
 # overlapper
 
-Extract bridges between contigs from long-read alignments to visualize the connection (under development).
+Extract the number of bridges between contigs from long-read alignments to visualize the connection (under development).
 
 ### Usage
 
