@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveGeneric, DeriveAnyClass, OverloadedStrings #-}
 module Main where
 
 import Lib
@@ -81,8 +82,8 @@ main = do
     --let edges = concat $ map ctgPairToEdges ovlp
     --let maxEdgeId = maximum $ concat $ map pairToList edges
     let graph = createGraph ovlp --buildG (0, maxEdgeId) $ edges
-    let start = Contig 15 True -- Contig 15 is forward strand at the left side of chr19.
-    let stop = Contig 10 True -- Contig 10 is forward strand at the right side of chr19, so the end strand should be forward.
+    let start = Contig 15 "" True -- Contig 15 is forward strand at the left side of chr19.
+    let stop = Contig 10 "" True -- Contig 10 is forward strand at the right side of chr19, so the end strand should be forward.
     let start_ = contigAsInt start
     let stop_ = contigAsInt stop 
     print $ path graph (contigAsInt start) (contigAsInt stop)
@@ -118,9 +119,9 @@ main = do
     print $ sp (contigAsInt start) (contigAsInt stop) dyngraph
     print $ lesp (contigAsInt start) (contigAsInt stop) dyngraph
 
-    let chr1_1 = Contig 466 False -- Contig 15 is forward strand at the left side of chr19.
-    let chr1_2 = Contig 112 False -- Contig 15 is forward strand at the left side of chr19.
-    let chr5_1 = Contig 111 False -- Contig 15 is forward strand at the left side of chr19.
+    let chr1_1 = Contig 466 "" False -- Contig 15 is forward strand at the left side of chr19.
+    let chr1_2 = Contig 112 "" False -- Contig 15 is forward strand at the left side of chr19.
+    let chr5_1 = Contig 111 "" False -- Contig 15 is forward strand at the left side of chr19.
 
     print "edge for unique contig"
     print $ sp (contigAsInt start) (contigAsInt chr1_1) dyngraph
@@ -136,6 +137,10 @@ main = do
     
     print "Onehop from start/stop"
     print $ context igraph 936 --igraph
+    print $ map (context igraph) $ neighbors' $ context igraph 936
+    print $ map (context igraph) $ neighbors' $ context igraph (contigAsInt chr1_1)
+    print $ map (context igraph) $ neighbors' $ context igraph (contigAsInt chr1_2)
+    print $ map (context igraph) $ neighbors' $ context igraph (contigAsInt chr5_1)
     --let start2 = Contig 10 True
     --print $ dfs graph [contigAsInt start2]
     --print graph

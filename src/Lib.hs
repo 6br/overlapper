@@ -21,8 +21,11 @@ import GHC.Int
 
 data Contig = Contig {
    contigId :: Int,
+   name :: T.Text,
    posStrand :: Bool
 } deriving (Show, Eq, Generic, ToJSON)
+
+
 
 contigAsInt :: Contig -> Int
 contigAsInt a = case (posStrand a) of
@@ -36,8 +39,8 @@ contigAsReverseInt a = case (posStrand a) of
 
 intToContig :: Int -> Contig
 intToContig a = case (mod a 2) of
-  0 -> Contig (a `div` 2) True
-  1 -> Contig (a `div` 2) False
+  0 -> Contig (a `div` 2) "" True
+  1 -> Contig (a `div` 2) "" False
 
 genNodes :: Int -> [(Int, Contig)]
 genNodes n = zip [1..n] $ map intToContig [1..n] 
@@ -95,8 +98,8 @@ convertToEdge a b = (convertToContig a, convertToContig b)
 
 convertToContig :: Aln -> Contig
 convertToContig a = case (_strand a) of
-    '+' -> Contig (contigIdToInt $ _tname a) True
-    '-' -> Contig (contigIdToInt $ _tname a) False
+    '+' -> Contig (contigIdToInt $ _tname a) (_tname a) True
+    '-' -> Contig (contigIdToInt $ _tname a) (_tname a) False
 
 contigIdToInt :: T.Text -> Int
 contigIdToInt x = (myRead x) !! 0 
